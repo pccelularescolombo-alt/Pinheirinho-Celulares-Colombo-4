@@ -103,6 +103,40 @@ body{
     color:white;
     cursor:pointer;
 }
+
+.track-info{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.progress-container{
+    position:relative;
+    height:6px;
+    background:#444;
+    border-radius:5px;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00c3ff,#ff7a00);
+}
+
+.dot{
+    position:absolute;
+    top:50%;
+    left:0%;
+    width:14px;
+    height:14px;
+    background:white;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+}
+
 </style>
 </head>
 
@@ -132,8 +166,14 @@ body{
     </div>
 
     <div class="track-bar">
-        <div class="track-text" id="trackName">Nenhuma música tocando</div>
-    </div>
+   <div class="track-info">
+      <span id="trackName">Nenhuma música tocando</span>
+      <span id="trackTime">00:00 / 00:00</span>
+   </div>
+   <div class="progress-container" onclick="seek(event)">
+      <div class="progress"></div>
+      <div class="dot"></div>
+   </div>
 </div>
 
 <!-- LOGIN -->
@@ -226,7 +266,29 @@ function volumeDown(){player.volume=Math.max(0,player.volume-0.1);}
 function changeCategory(){
     alert("Eletrônica é a categoria ativa (modo teste)");
 }
-</script>
 
+player.addEventListener("timeupdate",()=>{
+    const percent = (player.currentTime / player.duration) * 100 || 0;
+    document.querySelector(".progress").style.width = percent + "%";
+    document.querySelector(".dot").style.left = percent + "%";
+
+    trackTime.innerText =
+      formatTime(player.currentTime)+" / "+formatTime(player.duration);
+});
+
+function formatTime(sec){
+    if(!sec) return "00:00";
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60);
+    return m.toString().padStart(2,"0")+":"+s.toString().padStart(2,"0");
+}
+
+function seek(e){
+    const rect = e.currentTarget.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    player.currentTime = percent * player.duration;
+}
+
+</script>
 </body>
 </html>
