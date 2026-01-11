@@ -51,6 +51,12 @@ body{
     width:40px;
     height:40px;
     cursor:pointer;
+    opacity:0.6;
+    transition:.2s;
+}
+.controls img.active{
+    opacity:1;
+    filter:drop-shadow(0 0 6px #00c3ff);
 }
 
 /* BARRA MÚSICA */
@@ -117,9 +123,9 @@ body{
 <!-- BARRA INFERIOR -->
 <div class="bar bottom-bar">
     <div class="controls">
-        <img src="icon/play.png" onclick="playMusic()">
-        <img src="icon/pausa.png" onclick="pauseMusic()">
-        <img src="icon/volume_mute.png" onclick="muteMusic()">
+        <img id="playBtn" src="icon/play.png" onclick="playMusic()">
+        <img id="pauseBtn" src="icon/pausa.png" onclick="pauseMusic()">
+        <img id="muteBtn" src="icon/volume_mute.png" onclick="muteMusic()">
         <img src="icon/volume_menos.png" onclick="volumeDown()">
         <img src="icon/volume_mais.png" onclick="volumeUp()">
         <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
@@ -143,6 +149,13 @@ body{
 let userType="padrao";
 let musicCounter=0;
 let currentCategory="eletronica";
+
+let isPlaying=false;
+let isMuted=false;
+
+const playBtn=document.getElementById("playBtn");
+const pauseBtn=document.getElementById("pauseBtn");
+const muteBtn=document.getElementById("muteBtn");
 
 /* ELETRÔNICA */
 const musicas = {
@@ -187,12 +200,27 @@ function playMusic(){
     player.src=`musicas/${folder}/${song}`;
     trackName.innerText=song.replaceAll("_"," ");
     player.play();
+
+    isPlaying=true;
+    playBtn.classList.add("active");
+    pauseBtn.classList.remove("active");
 }
 
 player.onended=()=>playMusic();
 
-function pauseMusic(){player.pause();}
-function muteMusic(){player.muted=!player.muted;}
+function pauseMusic(){
+    player.pause();
+    isPlaying=false;
+    pauseBtn.classList.add("active");
+    playBtn.classList.remove("active");
+}
+
+function muteMusic(){
+    player.muted=!player.muted;
+    isMuted=player.muted;
+    muteBtn.classList.toggle("active",isMuted);
+}
+
 function volumeUp(){player.volume=Math.min(1,player.volume+0.1);}
 function volumeDown(){player.volume=Math.max(0,player.volume-0.1);}
 function changeCategory(){
