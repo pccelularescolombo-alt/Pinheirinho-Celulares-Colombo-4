@@ -167,15 +167,26 @@ body{
         <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
     </div>
 
-    <div class="track-bar">
-        <div class="track-info">
-            <span id="trackName">Nenhuma música tocando</span>
-            <span id="trackTime">00:00 / 00:00</span>
-        </div>
-        <div class="progress-container" onclick="seek(event)">
-            <div class="progress"></div>
-            <div class="dot"></div>
-        </div>
+<div class="track-bar">
+
+    <!-- BARRA DA MÚSICA ATUAL -->
+    <div class="track-info">
+        <span id="trackName">Nenhuma música tocando</span>
+        <span id="trackTime">00:00 / 00:00</span>
+    </div>
+    <div class="progress-container">
+        <div class="progress"></div>
+        <div class="dot"></div>
+    </div>
+
+    <!-- BARRA DO TEMPO DA CATEGORIA -->
+    <div class="track-info" style="margin-top:10px;">
+        <span>Categoria: <b id="catName">Eletrônica</b></span>
+        <span id="categoryTimeText">00:00 / 60:00</span>
+    </div>
+    <div class="progress-container">
+        <div class="cat-progress"></div>
+        <div class="cat-dot"></div>
     </div>
 
 </div>
@@ -354,13 +365,23 @@ function changeCategory(){
 }
 
 /* PROGRESSO */
-player.addEventListener("timeupdate",()=>{
-    const percent = (player.currentTime / player.duration) * 100 || 0;
-    document.querySelector(".progress").style.width = percent + "%";
-    document.querySelector(".dot").style.left = percent + "%";
+player.addEventListener("timeupdate", ()=>{
 
-    trackTime.innerText =
-      formatTime(player.currentTime)+" / "+formatTime(player.duration);
+   /* BARRA DA MÚSICA */
+   const musicPercent = (player.currentTime / player.duration) * 100 || 0;
+   document.querySelector(".progress").style.width = musicPercent + "%";
+   document.querySelector(".dot").style.left = musicPercent + "%";
+
+   /* BARRA DA CATEGORIA */
+   const catPercent = (categoryTime[currentCategory] / categoryLimit[currentCategory]) * 100 || 0;
+   document.querySelector(".cat-progress").style.width = Math.min(catPercent,100) + "%";
+   document.querySelector(".cat-dot").style.left = Math.min(catPercent,100) + "%";
+
+   trackTime.innerText =
+     formatTime(player.currentTime)+" / "+formatTime(player.duration);
+
+   categoryTimeText.innerText =
+     formatTime(categoryTime[currentCategory])+" / "+formatTime(categoryLimit[currentCategory]);
 });
 
 function formatTime(sec){
@@ -385,6 +406,30 @@ function prevMusic(){
     hasStarted=false;
     togglePlay();
 }
+
+let categoryTime = {
+  eletronica: 0,
+  pop: 0,
+  sertanejo: 0,
+  anos_80: 0,
+  anos_2000: 0,
+  divulgacao: 0
+};
+
+let categoryLimit = {
+  eletronica: 3600,
+  pop: 1800,
+  sertanejo: 2400,
+  anos_80: 1800,
+  anos_2000: 1800,
+  divulgacao: 600
+};
+
+setInterval(()=>{
+   if(!player.paused){
+      categoryTime[currentCategory]++;
+   }
+},1000);
 
 </script>
 </body>
