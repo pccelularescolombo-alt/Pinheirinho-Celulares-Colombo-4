@@ -170,6 +170,33 @@ body{
 </head>
 <body>
 
+<!-- PAINEL DE CATEGORIAS -->
+<div id="categoryPanel" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#000c;
+display:none;
+flex-direction:column;
+padding:20px;
+z-index:999;
+overflow:auto;
+">
+
+<h2>Selecionar categoria</h2>
+<div id="categoryList"></div>
+
+<hr>
+
+<h3 id="musicTitle">Músicas</h3>
+<div id="musicList"></div>
+
+<button onclick="closeCategories()" style="margin-top:15px;">Fechar</button>
+
+</div>
+
 <!-- BARRA SUPERIOR -->
 <div class="bar top-bar">
     <img src="logo/logo.png" class="logo">
@@ -369,7 +396,65 @@ function volumeUp(){player.volume=Math.min(1,player.volume+0.1);}
 function volumeDown(){player.volume=Math.max(0,player.volume-0.1);}
 
 function changeCategory(){
-    alert("Eletrônica é a categoria ativa (modo teste)");
+    if(userType!=="admin") return;
+
+    document.getElementById("categoryPanel").style.display="flex";
+    loadCategories();
+}
+
+const categoryListDiv = document.getElementById("categoryList");
+const musicListDiv = document.getElementById("musicList");
+const musicTitle = document.getElementById("musicTitle");
+
+function loadCategories(){
+    categoryListDiv.innerHTML="";
+    musicListDiv.innerHTML="";
+    musicTitle.innerText="Músicas";
+
+    for(let cat in musicas){
+        if(cat==="divulgacao") continue;
+
+        const btn = document.createElement("button");
+        btn.innerText = cat.replace("_"," ").toUpperCase();
+        btn.onclick = ()=> loadMusics(cat);
+        btn.style="margin:5px;padding:10px;width:100%;";
+
+        categoryListDiv.appendChild(btn);
+    }
+}
+
+function loadMusics(cat){
+    musicListDiv.innerHTML="";
+    musicTitle.innerText = "Músicas - "+cat.toUpperCase();
+
+    musicas[cat].forEach(music=>{
+        const btn = document.createElement("button");
+        btn.innerText = music.replaceAll("_"," ");
+        btn.onclick = ()=> selectMusic(cat,music);
+        btn.style="margin:5px;padding:8px;width:100%;";
+
+        musicListDiv.appendChild(btn);
+    });
+}
+
+function selectMusic(cat,music){
+    currentCategory = cat;
+    categoryTime[cat] = 0;
+
+    player.src = `musicas/${cat}/${music}`;
+    trackName.innerText = music.replaceAll("_"," ");
+    player.play();
+
+    playBtn.src="icon/pausa.png";
+    playBtn.classList.add("active");
+
+    document.getElementById("catName").innerText = cat.toUpperCase();
+
+    closeCategories();
+}
+
+function closeCategories(){
+    document.getElementById("categoryPanel").style.display="none";
 }
 
 /* PROGRESSO */
