@@ -402,6 +402,7 @@ let currentCategory = "eletronica";
 let currentIndex = 0;
 let isPlayingPromo = false;
 let hasStarted = false;
+let availableCategories = [];
 
 /* ================= ELEMENTOS ================= */
 const loginBtn = document.getElementById("loginBtn");
@@ -524,7 +525,7 @@ function logout(){
 function togglePlay(){
     if(!hasStarted){
         hasStarted = true;
-        startCategoryRandom(currentCategory);
+        startCategoryRandom();
         return;
     }
     if(player.paused) player.play();
@@ -549,29 +550,25 @@ function prevMusic(){ playPrev(); }
 
 /* ================= RÁDIO ================= */
 function playNext(){
-    if(!isPlayingPromo) musicCounter++;
+    if(!isPlayingPromo){
+        musicCounter++;
+    }
 
     if(musicCounter >= 5){
-        playPromo();
         musicCounter = 0;
+        playPromo();
         return;
     }
 
     const list = musicas[currentCategory];
-    currentIndex = (currentIndex + 1) % list.length;
-    playMusic(currentCategory, list[currentIndex]);
-}
 
-function playPrev(){
-    const list = musicas[currentCategory];
-    currentIndex = (currentIndex - 1 + list.length) % list.length;
-    playMusic(currentCategory, list[currentIndex]);
-}
+    if(currentIndex >= list.length - 1){
+        goToNextRandomCategory();
+        return;
+    }
 
-function playPromo(){
-    isPlayingPromo = true;
-    const p = musicas.divulgacao[Math.floor(Math.random()*musicas.divulgacao.length)];
-    playMusic("divulgacao", p);
+    currentIndex++;
+    playMusic(currentCategory, list[currentIndex]);
 }
 
 /* ================= PLAY ================= */
@@ -586,6 +583,37 @@ function playMusic(cat, song){
     isPlayingPromo = cat === "divulgacao";
 
     player.onloadedmetadata = () => startTrackTimer();
+}
+
+function resetAvailableCategories(){
+    availableCategories = Object.keys(musicas)
+        .filter(cat => cat !== "divulgacao");
+}
+
+function getRandomCategory(){
+    if(availableCategories.length === 0){
+        resetAvailableCategories();
+    }
+
+    const i = Math.floor(Math.random() * availableCategories.length);
+    const cat = availableCategories[i];
+    availableCategories.splice(i, 1);
+    return cat;
+}
+
+function goToNextRandomCategory(){
+    currentCategory = getRandomCategory();
+    currentIndex = 0;
+    categoryElapsed = 0;
+    categoryTotalSeconds = musicas[currentCategory].length * 240;
+
+    catName.innerText = currentCategory.toUpperCase();
+    playMusic(currentCategory, musicas[currentCategory][currentIndex]);
+}
+
+function startCategoryRandom(){
+    resetAvailableCategories();
+    goToNextRandomCategory();
 }
 
 /* ================= TEMPO ================= */
@@ -626,16 +654,6 @@ function formatHHMMSS(s){
     return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
 }
 
-/* ================= CATEGORIA ================= */
-function startCategoryRandom(cat){
-    currentCategory = cat;
-    currentIndex = Math.floor(Math.random()*musicas[cat].length);
-    categoryElapsed = 0;
-    categoryTotalSeconds = musicas[cat].length * 240;
-    catName.innerText = cat.toUpperCase();
-    playMusic(cat, musicas[cat][currentIndex]);
-}
-
 /* ================= MENU ================= */
 function changeCategory(){
     document.getElementById("categoryPanel").style.display="flex";
@@ -661,6 +679,8 @@ function loadCategories(){
     });
 }
 function openCategory(cat){
+    availableCategories = availableCategories.filter(c => c !== cat);
+    
     currentCategory = cat;
     catName.innerText = cat.toUpperCase();
     categoryTotalSeconds = musicas[cat].length * 240;
@@ -681,6 +701,18 @@ function openCategory(cat){
         };
         list.appendChild(btn);
     });
+}
+
+function playPrev(){
+    if(isPlayingPromo) return; // não volta divulgação
+
+    if(currentIndex > 0){
+        currentIndex--;
+        playMusic(currentCategory, musicas[currentCategory][currentIndex]);
+    } else {
+        // reinicia a música atual
+        player.currentTime = 0;
+    }
 }
 
 loadCategories();
