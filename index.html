@@ -33,18 +33,12 @@ body{
 
 /* CENTRO */
 .center{
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden; /* protege as barras */
-}
-
-/* IMAGEM CENTRAL */
-.center-img{
-    max-width: 100%;     /* melhor para banner horizontal */
-    max-height: 100%;    /* evita ocupar altura demais */
-    object-fit: contain;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
 }
 
 /* CONTROLES */
@@ -261,7 +255,8 @@ body{
 
 <!-- CENTRO -->
 <div class="center">
-    <img src="imagens/capa.png" class="center-img">
+    <h1>Rádio Online</h1>
+    <p>Pinheirinho Celulares</p>
 </div>
 
 <!-- BARRA INFERIOR -->
