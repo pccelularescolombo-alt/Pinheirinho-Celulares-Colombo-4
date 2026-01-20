@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Rádio Online</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 *{box-sizing:border-box;}
+
 body{
     margin:0;
     background:#111;
@@ -58,6 +58,15 @@ body{
     opacity:1;
     filter:drop-shadow(0 0 6px #00c3ff);
 }
+.controls img:hover{
+    opacity:1;
+    filter:drop-shadow(0 0 6px #00c3ff);
+    transform:scale(1.08);
+}
+.controls img:active{
+    transform:scale(0.95);
+    filter:drop-shadow(0 0 10px #ff7a00);
+}
 
 /* BARRA MÚSICA */
 .track-bar{
@@ -68,40 +77,6 @@ body{
     border-radius:20px;
     overflow:hidden;
     white-space:nowrap;
-}
-.track-text{
-    display:inline-block;
-    animation:scroll 12s linear infinite;
-}
-@keyframes scroll{
-    from{transform:translateX(100%);}
-    to{transform:translateX(-100%);}
-}
-
-/* LOGIN */
-#loginBox{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:#222;
-    padding:20px;
-    border-radius:10px;
-    display:none;
-    flex-direction:column;
-    gap:10px;
-}
-#loginBox input{
-    padding:8px;
-    border:none;
-    border-radius:5px;
-}
-#loginBox button{
-    padding:8px;
-    background:#ff7a00;
-    border:none;
-    color:white;
-    cursor:pointer;
 }
 
 .track-info{
@@ -137,6 +112,7 @@ body{
     transform:translate(-50%,-50%);
 }
 
+/* BARRA DUPLA */
 .dual-bars{
     display:flex;
     gap:15px;
@@ -166,19 +142,35 @@ body{
     transform:translate(-50%,-50%);
 }
 
-.controls img:hover{
-    opacity:1;
-    filter:drop-shadow(0 0 6px #00c3ff);
-    transform:scale(1.08);
+/* LOGIN */
+#loginBox{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#222;
+    padding:20px;
+    border-radius:10px;
+    display:none;
+    flex-direction:column;
+    gap:10px;
+    z-index:1000;
+}
+#loginBox input{
+    padding:8px;
+    border:none;
+    border-radius:5px;
+}
+#loginBox button{
+    padding:8px;
+    background:#ff7a00;
+    border:none;
+    color:white;
+    cursor:pointer;
 }
 
-.controls img:active{
-    transform:scale(0.95);
-    filter:drop-shadow(0 0 10px #ff7a00);
-}
-
-#categoryList,
-#musicList{
+/* MENU DE CATEGORIAS */
+#categoryList{
     display:flex;
     flex-direction:column;
     gap:10px;
@@ -215,23 +207,20 @@ body{
     font-size:15px;
     transition:.2s;
 }
-
 #categoryPanel button:hover{
     background:#ffa94d;
     transform:scale(1.03);
 }
 
-/* AJUSTE MOBILE */
+/* RESPONSIVO */
 @media (max-width: 768px){
 
     .bar{
-        height:50px;
-        padding:0 10px;
+        height:auto;
+        padding:8px 10px;
     }
 
-    .logo{
-        height:34px;
-    }
+    .logo{height:34px;}
 
     .center{
         justify-content:flex-start;
@@ -248,33 +237,19 @@ body{
         opacity:0.85;
     }
 
+    .controls{
+        justify-content:center;
+        flex-wrap:wrap;
+    }
+
     .controls img{
         width:34px;
         height:34px;
     }
 
-    .track-bar{
-        padding:6px 10px;
-    }
-
-    .track-info{
-        font-size:12px;
-    }
-}
-
-/* MOBILE – EMPILHAR CONTROLES E BARRAS */
-@media (max-width: 768px){
-
     .bottom-bar{
         flex-direction:column;
         gap:8px;
-        padding:8px 10px;
-        height:auto;
-    }
-
-    .controls{
-        justify-content:center;
-        flex-wrap:wrap;
     }
 
     .track-bar{
@@ -289,33 +264,39 @@ body{
         gap:8px;
     }
 
-    .bar-block{
-        width:100%;
-    }
+    .bar-block{width:100%;}
 
-    .track-info{
-        font-size:12px;
-    }
+    .track-info{font-size:12px;}
 
-    .progress-container{
-        height:8px;
-    }
+    .progress-container{height:8px;}
 }
 
+*{box-sizing:border-box;}
+body{
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+}
+/* resto do CSS */
 </style>
+
 </head>
 <body>
 
 <!-- PAINEL DE CATEGORIAS -->
 <div id="categoryPanel">
-
     <h2 id="panelTitle">Selecione uma categoria</h2>
-
-   <div id="categoryView">
-    <div id="categoryList"></div>
-
-    <button onclick="closeCategories()" style="margin-top:10px;">❌ Fechar</button>
+    <div id="categoryView">
+        <div id="categoryList"></div>
+        <button onclick="closeCategories()">❌ Fechar</button>
+    </div>
 </div>
+
+<body>
 
 <!-- BARRA SUPERIOR -->
 <div class="bar top-bar">
@@ -342,32 +323,33 @@ body{
         <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
     </div>
 
-<div class="track-bar dual-bars">
+    <div class="track-bar dual-bars">
 
-    <!-- BARRA DA MÚSICA -->
-    <div class="bar-block">
-        <div class="track-info">
-            <span id="trackName">Nenhuma música tocando</span>
-            <span id="trackTime">00:00 / 00:00</span>
+        <!-- BARRA DA MÚSICA -->
+        <div class="bar-block">
+            <div class="track-info">
+                <span id="trackName">Nenhuma música tocando</span>
+                <span id="trackTime">00:00 / 00:00</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress"></div>
+                <div class="dot"></div>
+            </div>
         </div>
-        <div class="progress-container">
-            <div class="progress"></div>
-            <div class="dot"></div>
+
+        <!-- BARRA DA CATEGORIA -->
+        <div class="bar-block">
+            <div class="track-info">
+                <span>Categoria: <b id="catName">Eletrônica</b></span>
+                <span id="categoryTimeText">00:00 / 60:00</span>
+            </div>
+            <div class="progress-container">
+                <div class="cat-progress"></div>
+                <div class="cat-dot"></div>
+            </div>
         </div>
+
     </div>
-
-    <!-- BARRA DA CATEGORIA -->
-    <div class="bar-block">
-        <div class="track-info">
-            <span>Categoria: <b id="catName">Eletrônica</b></span>
-            <span id="categoryTimeText">00:00 / 60:00</span>
-        </div>
-        <div class="progress-container">
-            <div class="cat-progress"></div>
-            <div class="cat-dot"></div>
-        </div>
-    </div>
-
 </div>
 
 <!-- LOGIN -->
@@ -386,7 +368,6 @@ let categoryTotalSeconds = 3600;
 let categoryElapsed = 0;
 
 let userType = "padrao";
-let musicCounter = 0;
 let currentCategory = "eletronica";
 let currentIndex = -1;
 let isPlayingPromo = false;
@@ -406,10 +387,13 @@ const user = document.getElementById("user");
 const pass = document.getElementById("pass");
 
 const player = document.getElementById("player");
+player.volume = 0.7;
+
 const trackName = document.getElementById("trackName");
 const catName = document.getElementById("catName");
 
 /* ================= MÚSICAS ================= */
+/* COMPLETE MANUALMENTE */
 const musicas = {
     eletronica: [
         "Amine_Edge_DANCE_Lost.mp3",
@@ -587,7 +571,9 @@ function startCategoryRandom(){
     currentCategory = getRandomCategory();
     currentIndex = -1;
     categoryElapsed = 0;
-    categoryTotalSeconds = musicas[currentCategory].length * 240;
+
+    const total = musicas[currentCategory].length;
+    categoryTotalSeconds = total > 0 ? total * 240 : 3600;
 
     catName.innerText = currentCategory.toUpperCase();
     playRandomMusic();
@@ -604,45 +590,60 @@ function startTrackTimer(){
 
 function updateTrackTime(){
     if(!player.duration) return;
+
     const p = (player.currentTime / player.duration) * 100;
+
     document.getElementById("trackTime").innerText =
-        formatTime(player.currentTime)+" / "+formatTime(player.duration);
-    document.querySelector(".progress").style.width = p+"%";
-    document.querySelector(".dot").style.left = p+"%";
+        formatTime(player.currentTime) + " / " + formatTime(player.duration);
+
+    document.querySelector(".progress").style.width = p + "%";
+    document.querySelector(".dot").style.left = p + "%";
 }
 
 function updateCategoryTime(){
     if(player.paused || isPlayingPromo) return;
+
     categoryElapsed++;
     const p = (categoryElapsed / categoryTotalSeconds) * 100;
-    document.querySelector(".cat-progress").style.width = p+"%";
-    document.querySelector(".cat-dot").style.left = p+"%";
+
+    document.querySelector(".cat-progress").style.width = p + "%";
+    document.querySelector(".cat-dot").style.left = p + "%";
+
     document.getElementById("categoryTimeText").innerText =
-        formatHHMMSS(categoryElapsed)+" / "+formatHHMMSS(categoryTotalSeconds);
+        formatHHMMSS(categoryElapsed) + " / " + formatHHMMSS(categoryTotalSeconds);
 }
 
 /* ================= FORMATOS ================= */
 function formatTime(s){
-    const m=Math.floor(s/60),sec=Math.floor(s%60);
-    return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return String(m).padStart(2,"0") + ":" + String(sec).padStart(2,"0");
 }
+
 function formatHHMMSS(s){
-    const h=Math.floor(s/3600),
-          m=Math.floor((s%3600)/60),
-          sec=Math.floor(s%60);
-    return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = Math.floor(s % 60);
+    return (
+        String(h).padStart(2,"0") + ":" +
+        String(m).padStart(2,"0") + ":" +
+        String(sec).padStart(2,"0")
+    );
 }
 
 /* ================= MENU CATEGORIA ================= */
 function changeCategory(){
     document.getElementById("categoryPanel").style.display = "flex";
 }
+
 function closeCategories(){
     document.getElementById("categoryPanel").style.display = "none";
 }
+
 function loadCategories(){
     const list = document.getElementById("categoryList");
     list.innerHTML = "";
+
     Object.keys(musicas).forEach(cat=>{
         if(cat === "divulgacao") return;
         const btn = document.createElement("button");
@@ -651,17 +652,21 @@ function loadCategories(){
         list.appendChild(btn);
     });
 }
+
 function openCategory(cat){
     currentCategory = cat;
     currentIndex = -1;
     categoryElapsed = 0;
-    categoryTotalSeconds = musicas[cat].length * 240;
+
+    const total = musicas[cat].length;
+    categoryTotalSeconds = total > 0 ? total * 240 : 3600;
 
     catName.innerText = cat.toUpperCase();
     playRandomMusic();
     closeCategories();
 }
 
+/* ================= INIT ================= */
 loadCategories();
 player.onended = () => playNext();
 
