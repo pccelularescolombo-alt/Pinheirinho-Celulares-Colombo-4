@@ -213,8 +213,7 @@ body{
 }
 
 /* RESPONSIVO */
-@media (max-width: 768px){
-
+@media (max-width: 1024px){
     .bar{
         height:auto;
         padding:8px 10px;
@@ -271,83 +270,33 @@ body{
     .progress-container{height:8px;}
 }
 
-*{box-sizing:border-box;}
-body{
-    margin:0;
-    background:#111;
-    color:white;
-    font-family:Arial,Helvetica,sans-serif;
-    display:flex;
-    flex-direction:column;
-    height:100vh;
-}
-
-/* AJUSTE MOBILE */
-@media (max-width: 768px){
-
-    .bar{
-        height:50px;
-        padding:0 10px;
-    }
-
-    .logo{
-        height:34px;
-    }
-
-    .center{
-        justify-content:flex-start;
-        padding-top:40px;
-    }
-
-    .center h1{
-        font-size:26px;
-        margin-bottom:8px;
-    }
-
-    .center p{
-        font-size:15px;
-        opacity:0.85;
-    }
-
-    .controls img{
-        width:34px;
-        height:34px;
-    }
-
-    .track-bar{
-        padding:6px 10px;
-    }
-
-    .track-info{
-        font-size:12px;
-    }
-}
-
-/* MOBILE – EMPILHAR CONTROLES E BARRAS */
+/* ===== MOBILE LAYOUT REAL ===== */
 @media (max-width: 768px){
 
     .bottom-bar{
         flex-direction:column;
-        gap:8px;
-        padding:8px 10px;
-        height:auto;
+        gap:12px;
+        padding:10px;
     }
 
+    /* BOTÕES EM UMA LINHA */
     .controls{
         justify-content:center;
         flex-wrap:wrap;
+        gap:12px;
     }
 
+    /* CADA BLOCO EM UMA LINHA */
     .track-bar{
         width:100%;
-        margin-left:0;
-        flex-direction:column;
-        gap:8px;
+        margin:0;
+        padding:10px;
+        border-radius:16px;
     }
 
     .dual-bars{
         flex-direction:column;
-        gap:8px;
+        gap:12px;
     }
 
     .bar-block{
@@ -355,11 +304,11 @@ body{
     }
 
     .track-info{
-        font-size:12px;
+        font-size:13px;
     }
 
     .progress-container{
-        height:8px;
+        height:10px;
     }
 }
 
@@ -377,8 +326,6 @@ body{
     </div>
 </div>
 
-<body>
-
 <!-- BARRA SUPERIOR -->
 <div class="bar top-bar">
     <img src="logo/logo.png" class="logo">
@@ -391,9 +338,9 @@ body{
     <p>Pinheirinho Celulares</p>
 </div>
 
-<!-- BARRA INFERIOR -->
 <div class="bar bottom-bar">
 
+    <!-- BOTÕES -->
     <div class="controls">
         <img id="playBtn" src="icon/play.png" onclick="togglePlay()">
         <img id="prevBtn" src="icon/back_musica.png" onclick="prevMusic()" style="display:none;">
@@ -404,10 +351,10 @@ body{
         <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
     </div>
 
+    <!-- TEMPOS -->
     <div class="track-bar dual-bars">
 
-        <!-- BARRA DA MÚSICA -->
-        <div class="bar-block">
+        <div class="bar-block music-block">
             <div class="track-info">
                 <span id="trackName">Nenhuma música tocando</span>
                 <span id="trackTime">00:00 / 00:00</span>
@@ -418,8 +365,7 @@ body{
             </div>
         </div>
 
-        <!-- BARRA DA CATEGORIA -->
-        <div class="bar-block">
+        <div class="bar-block category-block">
             <div class="track-info">
                 <span>Categoria: <b id="catName">Eletrônica</b></span>
                 <span id="categoryTimeText">00:00 / 60:00</span>
@@ -630,8 +576,8 @@ function playMusic(cat, song){
     player.src = `musicas/${cat}/${song}`;
     player.play();
 
-    trackName.innerText = song.replaceAll("_"," ");
-    isPlayingPromo = cat === "divulgacao";
+    trackName.innerText = song.split("_").join(" ");
+    isPlayingPromo = (cat === "divulgacao");
 
     player.onloadedmetadata = () => startTrackTimer();
 }
@@ -692,6 +638,11 @@ function updateCategoryTime(){
 
     document.getElementById("categoryTimeText").innerText =
         formatHHMMSS(categoryElapsed) + " / " + formatHHMMSS(categoryTotalSeconds);
+
+    if(categoryElapsed >= categoryTotalSeconds){
+        clearInterval(trackTimer);   // ⬅️ ESSENCIAL
+        startCategoryRandom();
+    }
 }
 
 /* ================= FORMATOS ================= */
@@ -713,10 +664,6 @@ function formatHHMMSS(s){
 }
 
 /* ================= MENU CATEGORIA ================= */
-function changeCategory(){
-    document.getElementById("categoryPanel").style.display = "flex";
-}
-
 function closeCategories(){
     document.getElementById("categoryPanel").style.display = "none";
 }
@@ -747,9 +694,13 @@ function openCategory(cat){
     closeCategories();
 }
 
+function changeCategory(){
+    document.getElementById("categoryPanel").style.display = "flex";
+}
+
 /* ================= INIT ================= */
 loadCategories();
-player.onended = () => playNext();
+player.addEventListener("ended", playNext);
 
 </script>
 </body>
