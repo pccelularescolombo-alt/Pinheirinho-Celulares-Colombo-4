@@ -446,12 +446,21 @@ function logout(){
 PLAYER
 ================================ */
 function togglePlay(){
+    if(!player.src){
+        iniciarRadio();
+        playBtn.src = "icon/pause.png";
+        playBtn.classList.add("active");
+        return;
+    }
+
     if(player.paused){
         player.play();
-        playBtn.src="icon/pause.png";
+        playBtn.src = "icon/pause.png";
+        playBtn.classList.add("active");
     }else{
         player.pause();
-        playBtn.src="icon/play.png";
+        playBtn.src = "icon/play.png";
+        playBtn.classList.remove("active");
     }
 }
 
@@ -505,7 +514,7 @@ const musicas = {
     ],
     "Pagode": [
     ],
-    "Anos 80": [
+    "Anos80": [
     ],
     "Divulgacao": [
     ]
@@ -620,16 +629,6 @@ function formatarHMS(t){
     return `${h}:${m}:${s}`;
 }
 
-/* ===== PRIMEIRO PLAY ===== */
-const oldTogglePlay = togglePlay;
-togglePlay = function(){
-    if(!player.src){
-        iniciarRadio();
-    }else{
-        oldTogglePlay();
-    }
-};
-
 /* ===============================
 PARTE 13 – JS PAINEL DE GÊNEROS
 ================================ */
@@ -716,20 +715,6 @@ PARTE 14 – ESTADOS VISUAIS
 const playBtnEl = document.getElementById("playBtn");
 const muteBtnEl = document.getElementById("muteBtn");
 const loginBtnEl = document.getElementById("loginIcon");
-
-/* PLAY / PAUSE VISUAL */
-const originalTogglePlay = togglePlay;
-togglePlay = function(){
-    originalTogglePlay();
-
-    if(!player.paused){
-        playBtnEl.classList.add("active");
-        playBtnEl.src = "icon/pause.png";
-    }else{
-        playBtnEl.classList.remove("active");
-        playBtnEl.src = "icon/play.png";
-    }
-};
 
 /* MUTE VISUAL */
 const originalMute = toggleMute;
