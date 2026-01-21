@@ -54,31 +54,22 @@ body{
     opacity:0.6;
     transition:.2s;
 }
-.controls img.active{
-    opacity:1;
-    filter:drop-shadow(0 0 6px #00c3ff);
-}
 .controls img:hover{
     opacity:1;
     filter:drop-shadow(0 0 6px #00c3ff);
     transform:scale(1.08);
 }
-.controls img:active{
-    transform:scale(0.95);
-    filter:drop-shadow(0 0 10px #ff7a00);
-}
 
-/* BARRA MÚSICA */
+/* BARRA */
 .track-bar{
     flex:1;
     margin-left:10px;
     background:#222;
     padding:8px 12px;
     border-radius:20px;
-    overflow:hidden;
-    white-space:nowrap;
 }
 
+/* INFO */
 .track-info{
     display:flex;
     justify-content:space-between;
@@ -86,22 +77,22 @@ body{
     margin-bottom:6px;
 }
 
+/* PROGRESSO */
 .progress-container{
     position:relative;
-    height:6px;
+    height:8px;
     background:#444;
     border-radius:5px;
     overflow:hidden;
-    cursor:pointer;
 }
 
-.progress{
+.progress, .cat-progress{
     height:100%;
     width:0%;
     background:linear-gradient(90deg,#00c3ff,#ff7a00);
 }
 
-.dot{
+.dot, .cat-dot{
     position:absolute;
     top:50%;
     left:0%;
@@ -112,34 +103,13 @@ body{
     transform:translate(-50%,-50%);
 }
 
-/* BARRA DUPLA */
+/* BLOCO DUPLO */
 .dual-bars{
     display:flex;
     gap:15px;
 }
-
 .bar-block{
     flex:1;
-    display:flex;
-    flex-direction:column;
-}
-
-/* Barra da categoria */
-.cat-progress{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#ff0066,#ffaa00);
-}
-
-.cat-dot{
-    position:absolute;
-    top:50%;
-    left:0%;
-    width:14px;
-    height:14px;
-    background:#ffcc00;
-    border-radius:50%;
-    transform:translate(-50%,-50%);
 }
 
 /* LOGIN */
@@ -156,27 +126,8 @@ body{
     gap:10px;
     z-index:1000;
 }
-#loginBox input{
-    padding:8px;
-    border:none;
-    border-radius:5px;
-}
-#loginBox button{
-    padding:8px;
-    background:#ff7a00;
-    border:none;
-    color:white;
-    cursor:pointer;
-}
 
-/* MENU DE CATEGORIAS */
-#categoryList{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    width:100%;
-}
-
+/* CATEGORIAS */
 #categoryPanel{
     position:fixed;
     top:50%;
@@ -190,146 +141,32 @@ body{
     gap:12px;
     width:90%;
     max-width:420px;
-    max-height:80vh;
-    overflow:auto;
     z-index:999;
-    box-shadow:0 0 40px #000;
 }
-
 #categoryPanel button{
-    width:100%;
     padding:12px;
     background:#ff7a00;
     border:none;
     border-radius:8px;
     color:white;
     cursor:pointer;
-    font-size:15px;
-    transition:.2s;
 }
-#categoryPanel button:hover{
-    background:#ffa94d;
-    transform:scale(1.03);
-}
-
-/* RESPONSIVO */
-@media (max-width: 1024px){
-    .bar{
-        height:auto;
-        padding:8px 10px;
-    }
-
-    .logo{height:34px;}
-
-    .center{
-        justify-content:flex-start;
-        padding-top:40px;
-    }
-
-    .center h1{
-        font-size:26px;
-        margin-bottom:8px;
-    }
-
-    .center p{
-        font-size:15px;
-        opacity:0.85;
-    }
-
-    .controls{
-        justify-content:center;
-        flex-wrap:wrap;
-    }
-
-    .controls img{
-        width:34px;
-        height:34px;
-    }
-
-    .bottom-bar{
-        flex-direction:column;
-        gap:8px;
-    }
-
-    .track-bar{
-        width:100%;
-        margin-left:0;
-        flex-direction:column;
-        gap:8px;
-    }
-
-    .dual-bars{
-        flex-direction:column;
-        gap:8px;
-    }
-
-    .bar-block{width:100%;}
-
-    .track-info{font-size:12px;}
-
-    .progress-container{height:8px;}
-}
-
-/* ===== MOBILE LAYOUT REAL ===== */
-@media (max-width: 768px){
-
-    .bottom-bar{
-        flex-direction:column;
-        gap:12px;
-        padding:10px;
-    }
-
-    /* BOTÕES EM UMA LINHA */
-    .controls{
-        justify-content:center;
-        flex-wrap:wrap;
-        gap:12px;
-    }
-
-    /* CADA BLOCO EM UMA LINHA */
-    .track-bar{
-        width:100%;
-        margin:0;
-        padding:10px;
-        border-radius:16px;
-    }
-
-    .dual-bars{
-        flex-direction:column;
-        gap:12px;
-    }
-
-    .bar-block{
-        width:100%;
-    }
-
-    .track-info{
-        font-size:13px;
-    }
-
-    .progress-container{
-        height:10px;
-    }
-}
-
 </style>
-
 </head>
+
 <body>
 
-<!-- PAINEL DE CATEGORIAS -->
+<!-- CATEGORIAS -->
 <div id="categoryPanel">
-    <h2 id="panelTitle">Selecione uma categoria</h2>
-    <div id="categoryView">
-        <div id="categoryList"></div>
-        <button onclick="closeCategories()">❌ Fechar</button>
-    </div>
+    <h2>Categoria</h2>
+    <button onclick="startCategoryRandom();closeCategories()">▶ Tocar Aleatório</button>
+    <button onclick="closeCategories()">❌ Fechar</button>
 </div>
 
-<!-- BARRA SUPERIOR -->
+<!-- TOPO -->
 <div class="bar top-bar">
     <img src="logo/logo.png" class="logo">
-    <img id="loginBtn" src="icon/login.png" class="logo" style="cursor:pointer;">
+    <img id="loginBtn" src="icon/login.png" class="logo" onclick="openLogin()">
 </div>
 
 <!-- CENTRO -->
@@ -338,45 +175,42 @@ body{
     <p>Pinheirinho Celulares</p>
 </div>
 
+<!-- CONTROLES -->
 <div class="bar bottom-bar">
 
-    <!-- BOTÕES -->
-    <div class="controls">
-        <img id="playBtn" src="icon/play.png" onclick="togglePlay()">
-        <img id="prevBtn" src="icon/back_musica.png" onclick="prevMusic()" style="display:none;">
-        <img id="nextBtn" src="icon/next_musica.png" onclick="nextMusic()" style="display:none;">
-        <img id="muteBtn" src="icon/volume_mute.png" onclick="muteMusic()">
-        <img src="icon/volume_menos.png" onclick="volumeDown()">
-        <img src="icon/volume_mais.png" onclick="volumeUp()">
-        <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
+<div class="controls">
+    <img id="playBtn" src="icon/play.png" onclick="togglePlay()">
+    <img id="muteBtn" src="icon/volume_mute.png" onclick="muteMusic()">
+    <img src="icon/volume_menos.png" onclick="volumeDown()">
+    <img src="icon/volume_mais.png" onclick="volumeUp()">
+    <img id="catBtn" src="icon/categoria.png" onclick="changeCategory()" style="display:none;">
+</div>
+
+<div class="track-bar dual-bars">
+
+<div class="bar-block">
+    <div class="track-info">
+        <span id="trackName">Nenhuma música</span>
+        <span id="trackTime">00:00 / 00:00</span>
     </div>
-
-    <!-- TEMPOS -->
-    <div class="track-bar dual-bars">
-
-        <div class="bar-block music-block">
-            <div class="track-info">
-                <span id="trackName">Nenhuma música tocando</span>
-                <span id="trackTime">00:00 / 00:00</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress"></div>
-                <div class="dot"></div>
-            </div>
-        </div>
-
-        <div class="bar-block category-block">
-            <div class="track-info">
-                <span>Categoria: <b id="catName">Eletrônica</b></span>
-                <span id="categoryTimeText">00:00 / 60:00</span>
-            </div>
-            <div class="progress-container">
-                <div class="cat-progress"></div>
-                <div class="cat-dot"></div>
-            </div>
-        </div>
-
+    <div class="progress-container">
+        <div class="progress"></div>
+        <div class="dot"></div>
     </div>
+</div>
+
+<div class="bar-block">
+    <div class="track-info">
+        <span>Categoria: <b id="catName">---</b></span>
+        <span id="catCounter">0 / 0 músicas</span>
+    </div>
+    <div class="progress-container">
+        <div class="cat-progress"></div>
+        <div class="cat-dot"></div>
+    </div>
+</div>
+
+</div>
 </div>
 
 <!-- LOGIN -->
@@ -389,37 +223,22 @@ body{
 <audio id="player"></audio>
 
 <script>
-/* ================= VARIÁVEIS ================= */
-let trackTimer = null;
-let categoryTotalSeconds = 3600;
-let categoryElapsed = 0;
+/* ===== VARIÁVEIS ===== */
+let hasStarted=false,isPlayingPromo=false;
+let currentCategory="",playedSongs=[],musicCounter=0;
 
-let userType = "padrao";
-let currentCategory = "eletronica";
-let currentIndex = -1;
-let isPlayingPromo = false;
-let hasStarted = false;
-let availableCategories = [];
+/* ===== ELEMENTOS ===== */
+const player=document.getElementById("player");
+const trackName=document.getElementById("trackName");
+const trackTime=document.getElementById("trackTime");
+const catName=document.getElementById("catName");
+const catCounter=document.getElementById("catCounter");
+const progress=document.querySelector(".progress");
+const dot=document.querySelector(".dot");
+const catProgress=document.querySelector(".cat-progress");
+const catDot=document.querySelector(".cat-dot");
 
-/* ================= ELEMENTOS ================= */
-const loginBtn = document.getElementById("loginBtn");
-const catBtn = document.getElementById("catBtn");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const playBtn = document.getElementById("playBtn");
-const muteBtn = document.getElementById("muteBtn");
-
-const loginBox = document.getElementById("loginBox");
-const user = document.getElementById("user");
-const pass = document.getElementById("pass");
-
-const player = document.getElementById("player");
-player.volume = 0.7;
-
-const trackName = document.getElementById("trackName");
-const catName = document.getElementById("catName");
-
-/* ================= MÚSICAS ================= */
+/* ===== MÚSICAS ===== */
 /* COMPLETE MANUALMENTE */
 const musicas = {
     eletronica: [
@@ -435,7 +254,6 @@ const musicas = {
         "I_Follow_Rivers_Lykke_Li.mp3",
         "James_Hype_7_Seconds_ft_Shamira_Battles.mp3",
         "James_Hype_Drums_feat_Kim_Petra.mp3",
-        "James_Hype_Drums_ft_Kim_Petras.mp3",
         "James_Hype_Miggy_Dela_Rosa_Ferrari.mp3",
         "Kendrick_Lamar_SZA_All_The_Stars.mp3",
         "MEDUZA_Becky_Hill_Goodboys_Lose_Control.mp3",
@@ -497,211 +315,85 @@ const musicas = {
     ]
 };
 
-/* ================= LOGIN ================= */
-loginBtn.onclick = () => {
-    if(userType === "padrao") loginBox.style.display = "flex";
-    else logout();
-};
-
-function login(){
-    if(user.value === "admin" && pass.value === "1234"){
-        userType = "admin";
-        loginBtn.src = "icon/sair.png";
-        catBtn.style.display = "block";
-        prevBtn.style.display = "block";
-        nextBtn.style.display = "block";
-        loginBox.style.display = "none";
-    }
-}
-
-function logout(){
-    userType = "padrao";
-    loginBtn.src = "icon/login.png";
-    catBtn.style.display = "none";
-    prevBtn.style.display = "none";
-    nextBtn.style.display = "none";
-}
-
-/* ================= PLAY / PAUSE ================= */
+/* ===== PLAYER ===== */
 function togglePlay(){
-    if(!hasStarted){
-        hasStarted = true;
-        startCategoryRandom();
-        return;
-    }
-    player.paused ? player.play() : player.pause();
+    if(!hasStarted){hasStarted=true;startCategoryRandom();return;}
+    player.paused?player.play():player.pause();
 }
 
-player.onplay = () => playBtn.src = "icon/pausa.png";
-player.onpause = () => playBtn.src = "icon/play.png";
-
-/* ================= VOLUME ================= */
-function volumeUp(){ player.volume = Math.min(1, player.volume + 0.1); }
-function volumeDown(){ player.volume = Math.max(0, player.volume - 0.1); }
-function muteMusic(){
-    player.muted = !player.muted;
-    muteBtn.src = player.muted ? "icon/volume_mute.png" : "icon/volume.png";
-}
-
-/* ================= CONTROLES ================= */
-function nextMusic(){ playNext(); }
-function prevMusic(){ playPrev(); }
-
-/* ================= RÁDIO ALEATÓRIA ================= */
-function playRandomMusic(){
-    const list = musicas[currentCategory];
-    if(!list || list.length === 0) return;
-
-    let nextIndex;
-    do{
-        nextIndex = Math.floor(Math.random() * list.length);
-    } while(nextIndex === currentIndex && list.length > 1);
-
-    currentIndex = nextIndex;
-    playMusic(currentCategory, list[currentIndex]);
-}
-
-function playNext(){
-    playRandomMusic();
-}
-
-function playPrev(){
-    player.currentTime = 0;
-}
-
-/* ================= PLAY ================= */
-function playMusic(cat, song){
-    clearInterval(trackTimer);
-
-    player.src = `musicas/${cat}/${song}`;
+function playMusic(cat,song){
+    player.src=`musicas/${cat}/${song}`;
     player.play();
-
-    trackName.innerText = song.split("_").join(" ");
-    isPlayingPromo = (cat === "divulgacao");
-
-    player.onloadedmetadata = () => startTrackTimer();
+    trackName.innerText=song.replace(/_/g," ");
+    isPlayingPromo=(cat==="divulgacao");
 }
 
-/* ================= CATEGORIAS ================= */
-function resetAvailableCategories(){
-    availableCategories = Object.keys(musicas).filter(c => c !== "divulgacao");
-}
-
-function getRandomCategory(){
-    if(availableCategories.length === 0) resetAvailableCategories();
-    const i = Math.floor(Math.random() * availableCategories.length);
-    return availableCategories.splice(i,1)[0];
-}
-
+/* ===== CATEGORIA ===== */
 function startCategoryRandom(){
-    resetAvailableCategories();
-    currentCategory = getRandomCategory();
-    currentIndex = -1;
-    categoryElapsed = 0;
-
-    const total = musicas[currentCategory].length;
-    categoryTotalSeconds = total > 0 ? total * 240 : 3600;
-
-    catName.innerText = currentCategory.toUpperCase();
-    playRandomMusic();
+    const cats=Object.keys(musicas).filter(c=>c!=="divulgacao"&&musicas[c].length);
+    currentCategory=cats[Math.floor(Math.random()*cats.length)];
+    playedSongs=[];
+    musicCounter=0;
+    catName.innerText=currentCategory.toUpperCase();
+    playRandom();
 }
 
-/* ================= TEMPO ================= */
-function startTrackTimer(){
-    clearInterval(trackTimer);
-    trackTimer = setInterval(()=>{
-        updateTrackTime();
-        updateCategoryTime();
-    },1000);
+function playRandom(){
+    if(playedSongs.length===musicas[currentCategory].length){
+        startCategoryRandom();return;
+    }
+    let song;
+    do{
+        song=musicas[currentCategory][Math.floor(Math.random()*musicas[currentCategory].length)];
+    }while(playedSongs.includes(song));
+    playedSongs.push(song);
+    playMusic(currentCategory,song);
 }
 
-function updateTrackTime(){
-    if(!player.duration) return;
+/* ===== EVENTOS ===== */
+player.addEventListener("ended",()=>{
+    if(isPlayingPromo){isPlayingPromo=false;playRandom();}
+    else{
+        musicCounter++;
+        if(musicCounter%5===0&&musicas.divulgacao.length){
+            playMusic("divulgacao",musicas.divulgacao[Math.floor(Math.random()*musicas.divulgacao.length)]);
+        }else playRandom();
+    }
+});
 
-    const p = (player.currentTime / player.duration) * 100;
+player.addEventListener("timeupdate",()=>{
+    if(!player.duration)return;
+    const p=(player.currentTime/player.duration)*100;
+    progress.style.width=p+"%";
+    dot.style.left=p+"%";
+    trackTime.innerText=
+        format(player.currentTime)+" / "+format(player.duration);
+    catCounter.innerText=`${playedSongs.length} / ${musicas[currentCategory].length} músicas`;
+    const cp=(playedSongs.length/musicas[currentCategory].length)*100;
+    catProgress.style.width=cp+"%";
+    catDot.style.left=cp+"%";
+});
 
-    document.getElementById("trackTime").innerText =
-        formatTime(player.currentTime) + " / " + formatTime(player.duration);
-
-    document.querySelector(".progress").style.width = p + "%";
-    document.querySelector(".dot").style.left = p + "%";
+function format(t){
+    const m=Math.floor(t/60).toString().padStart(2,"0");
+    const s=Math.floor(t%60).toString().padStart(2,"0");
+    return `${m}:${s}`;
 }
 
-function updateCategoryTime(){
-    if(player.paused || isPlayingPromo) return;
-
-    categoryElapsed++;
-    const p = (categoryElapsed / categoryTotalSeconds) * 100;
-
-    document.querySelector(".cat-progress").style.width = p + "%";
-    document.querySelector(".cat-dot").style.left = p + "%";
-
-    document.getElementById("categoryTimeText").innerText =
-        formatHHMMSS(categoryElapsed) + " / " + formatHHMMSS(categoryTotalSeconds);
-
-    if(categoryElapsed >= categoryTotalSeconds){
-        clearInterval(trackTimer);   // ⬅️ ESSENCIAL
-        startCategoryRandom();
+/* ===== UI ===== */
+function muteMusic(){player.muted=!player.muted;}
+function volumeUp(){player.volume=Math.min(1,player.volume+.1);}
+function volumeDown(){player.volume=Math.max(0,player.volume-.1);}
+function changeCategory(){document.getElementById("categoryPanel").style.display="flex";}
+function closeCategories(){document.getElementById("categoryPanel").style.display="none";}
+function openLogin(){document.getElementById("loginBox").style.display="flex";}
+function login(){
+    if(user.value==="admin"&&pass.value==="1234"){
+        document.getElementById("catBtn").style.display="block";
+        document.getElementById("loginBox").style.display="none";
     }
 }
-
-/* ================= FORMATOS ================= */
-function formatTime(s){
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return String(m).padStart(2,"0") + ":" + String(sec).padStart(2,"0");
-}
-
-function formatHHMMSS(s){
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = Math.floor(s % 60);
-    return (
-        String(h).padStart(2,"0") + ":" +
-        String(m).padStart(2,"0") + ":" +
-        String(sec).padStart(2,"0")
-    );
-}
-
-/* ================= MENU CATEGORIA ================= */
-function closeCategories(){
-    document.getElementById("categoryPanel").style.display = "none";
-}
-
-function loadCategories(){
-    const list = document.getElementById("categoryList");
-    list.innerHTML = "";
-
-    Object.keys(musicas).forEach(cat=>{
-        if(cat === "divulgacao") return;
-        const btn = document.createElement("button");
-        btn.innerText = cat.toUpperCase();
-        btn.onclick = () => openCategory(cat);
-        list.appendChild(btn);
-    });
-}
-
-function openCategory(cat){
-    currentCategory = cat;
-    currentIndex = -1;
-    categoryElapsed = 0;
-
-    const total = musicas[cat].length;
-    categoryTotalSeconds = total > 0 ? total * 240 : 3600;
-
-    catName.innerText = cat.toUpperCase();
-    playRandomMusic();
-    closeCategories();
-}
-
-function changeCategory(){
-    document.getElementById("categoryPanel").style.display = "flex";
-}
-
-/* ================= INIT ================= */
-loadCategories();
-player.addEventListener("ended", playNext);
-
 </script>
+
 </body>
 </html>
