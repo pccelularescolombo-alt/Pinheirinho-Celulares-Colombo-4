@@ -68,8 +68,8 @@ BARRA INFERIOR FIXA
     left:0;
     width:100%;
     height:120px;
-    background:#000;
-    border-top:1px solid #222;
+    background:linear-gradient(90deg,#007bff,#ff7a00);
+    border-top:1px solid rgba(255,255,255,.15);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -81,11 +81,23 @@ PLAYER WRAPPER
 ================================ */
 .player-wrapper{
     width:100%;
-    max-width:1200px;
+    max-width:1400px; /* aumenta área útil */
     display:flex;
     align-items:center;
-    gap:15px;
-    padding:0 15px;
+    gap:22px;
+    padding:0 25px;
+}
+
+.track-bar{
+    flex:1.4; /* ocupa mais espaço */
+    background:rgba(0,0,0,.35);
+    border-radius:14px;
+    padding:12px 18px;
+    height:78px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    backdrop-filter: blur(6px);
 }
 
 /* ===============================
@@ -128,7 +140,8 @@ BARRAS (MÚSICA / GÊNERO)
     display:flex;
     justify-content:space-between;
     font-size:13px;
-    margin-bottom:6px;
+    font-weight:500;
+    opacity:.95;
 }
 
 .progress-container{
@@ -194,7 +207,13 @@ RESPONSIVO
 @media(max-width:768px){
     .player-wrapper{
         flex-direction:column;
+        gap:14px;
     }
+
+    .controls{
+        order:1;
+    }
+
     .track-bar{
         width:100%;
     }
@@ -372,6 +391,7 @@ const user = document.getElementById("user");
 const pass = document.getElementById("pass");
 
 let isAdmin = false;
+let tempoTotalGenero = 0;
 
 /* ===============================
 LOGIN / LOGOUT
@@ -589,11 +609,6 @@ player.addEventListener("timeupdate", () => {
     document.getElementById("trackTime").innerText =
         formatar(player.currentTime) + " / " + formatar(player.duration);
 
-    const total = musicas[generoAtual].length;
-    const atual = musicasTocadas.length;
-
-    document.getElementById("genreInfo").innerText =
-        atual + " / " + total;
     document.getElementById("genreProgress").style.width =
         (atual / total) * 100 + "%";
     document.getElementById("genreDot").style.left =
@@ -605,6 +620,13 @@ function formatar(t){
     const m = Math.floor(t / 60).toString().padStart(2,"0");
     const s = Math.floor(t % 60).toString().padStart(2,"0");
     return `${m}:${s}`;
+}
+
+function formatarHMS(t){
+    const h = Math.floor(t / 3600).toString().padStart(2,"0");
+    const m = Math.floor((t % 3600) / 60).toString().padStart(2,"0");
+    const s = Math.floor(t % 60).toString().padStart(2,"0");
+    return `${h}:${m}:${s}`;
 }
 
 /* ===== PRIMEIRO PLAY ===== */
@@ -718,6 +740,26 @@ logout = function(){
     originalLogout();
     loginBtnEl.classList.remove("active");
 };
+
+function calcularTempoGenero(genero){
+    tempoTotalGenero = 0;
+
+    const lista = musicas[genero];
+    let carregadas = 0;
+
+    lista.forEach(musica=>{
+        const audioTemp = new Audio(`musicas/${genero}/${musica}`);
+        audioTemp.addEventListener("loadedmetadata", ()=>{
+            tempoTotalGenero += audioTemp.duration;
+            carregadas++;
+
+            if(carregadas === lista.length){
+                document.getElementById("genreInfo").innerText =
+                    formatarHMS(tempoTotalGenero);
+            }
+        });
+    });
+}
 
 </script>
 </body>
