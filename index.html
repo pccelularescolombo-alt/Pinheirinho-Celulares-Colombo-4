@@ -392,6 +392,7 @@ const pass = document.getElementById("pass");
 
 let isAdmin = false;
 let tempoTotalGenero = 0;
+let tempoGeneroTocado = 0;
 
 /* ===============================
 LOGIN / LOGOUT
@@ -534,8 +535,11 @@ function escolherGeneroAutomatico(){
     generoAtual = generos[Math.floor(Math.random() * generos.length)];
     musicasTocadas = [];
     contadorMusicas = 0;
+    tempoGeneroTocado = 0;
 
     document.getElementById("genreName").innerText = generoAtual;
+
+    calcularTempoGenero(generoAtual); // ✅ AQUI
 }
 
 /* ===== TOCAR PRÓXIMA ===== */
@@ -566,20 +570,30 @@ function tocarMusica(genero, arquivo){
 }
 
 /* ===== EVENTO FIM ===== */
-player.addEventListener("ended", () => {
+/* ===== BARRAS ===== */
+player.addEventListener("timeupdate", () => {
 
-    if(tocandoDivulgacao){
-        tocandoDivulgacao = false;
-        tocarProxima();
-        return;
-    }
+    if(!player.duration) return;
 
-    contadorMusicas++;
+    /* MÚSICA */
+    const pct = (player.currentTime / player.duration) * 100;
 
-    if(contadorMusicas % 5 === 0){
-        tocarDivulgacao();
-    }else{
-        tocarProxima();
+    document.getElementById("musicProgress").style.width = pct + "%";
+    document.getElementById("musicDot").style.left = pct + "%";
+
+    document.getElementById("trackTime").innerText =
+        formatar(player.currentTime) + " / " + formatar(player.duration);
+
+    /* GÊNERO */
+    if(tempoTotalGenero > 0){
+        const totalTocado = tempoGeneroTocado + player.currentTime;
+        const pctGenero = (totalTocado / tempoTotalGenero) * 100;
+
+        document.getElementById("genreProgress").style.width =
+            Math.min(pctGenero, 100) + "%";
+
+        document.getElementById("genreDot").style.left =
+            Math.min(pctGenero, 100) + "%";
     }
 });
 
@@ -670,17 +684,24 @@ function closeGenrePanel(){
 }
 
 /* ESCOLHA MANUAL */
-function escolherGeneroManual(genero){
-    generoAtual = genero;
-    musicasTocadas = [];
-    contadorMusicas = 0;
-    tocandoDivulgacao = false;
+player.addEventListener("ended", () => {
 
-    document.getElementById("genreName").innerText = generoAtual;
+    tempoGeneroTocado += player.duration || 0; // ✅ soma real
 
-    closeGenrePanel();
-    tocarProxima();
-}
+    if(tocandoDivulgacao){
+        tocandoDivulgacao = false;
+        tocarProxima();
+        return;
+    }
+
+    contadorMusicas++;
+
+    if(contadorMusicas % 5 === 0){
+        tocarDivulgacao();
+    }else{
+        tocarProxima();
+    }
+});
 
 /* AUTOMÁTICO */
 function autoGenre(){
