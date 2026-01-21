@@ -462,8 +462,14 @@ function toggleMute(){
 
 function volumeUp(){ player.volume = Math.min(1, player.volume + 0.1); }
 function volumeDown(){ player.volume = Math.max(0, player.volume - 0.1); }
+
+function nextMusic(){
+    player.dispatchEvent(new Event("ended"));
+}
+
 function openGenres(){
     alert("Painel de gêneros – próxima etapa");
+}
 
 /* ===============================
 PARTE 12 – LÓGICA DE MÚSICAS
