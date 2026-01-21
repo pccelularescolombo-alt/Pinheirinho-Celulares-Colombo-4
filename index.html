@@ -467,10 +467,6 @@ function nextMusic(){
     player.dispatchEvent(new Event("ended"));
 }
 
-function openGenres(){
-    alert("Painel de gêneros – próxima etapa");
-}
-
 /* ===============================
 PARTE 12 – LÓGICA DE MÚSICAS
 ================================ */
@@ -610,21 +606,6 @@ function tocarDivulgacao(){
     tocarMusica("Divulgacao", promo);
 }
 
-/* ===== BARRAS ===== */
-player.addEventListener("timeupdate", () => {
-
-    if(!player.duration) return;
-
-    const pct = (player.currentTime / player.duration) * 100;
-
-    document.getElementById("musicProgress").style.width = pct + "%";
-    document.getElementById("musicDot").style.left = pct + "%";
-
-    document.getElementById("trackTime").innerText =
-        formatar(player.currentTime) + " / " + formatar(player.duration);
-
-});
-
 /* ===== FORMATO TEMPO ===== */
 function formatar(t){
     const m = Math.floor(t / 60).toString().padStart(2,"0");
@@ -677,6 +658,21 @@ function openGenres(){
 /* FECHAR */
 function closeGenrePanel(){
     genrePanel.style.display = "none";
+}
+
+function escolherGeneroManual(genero){
+    closeGenrePanel();
+
+    generoAtual = genero;
+    musicasTocadas = [];
+    contadorMusicas = 0;
+    tempoGeneroTocado = 0;
+    tocandoDivulgacao = false;
+
+    document.getElementById("genreName").innerText = generoAtual;
+
+    calcularTempoGenero(generoAtual);
+    tocarProxima();
 }
 
 /* ESCOLHA MANUAL */
