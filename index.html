@@ -592,13 +592,11 @@ function tocarProxima(){
     tocarMusica(generoAtual, musica);
 }
 
-/* ===== TOCAR MÚSICA ===== */
 function tocarMusica(genero, arquivo){
+    document.getElementById("trackName").innerText = "Carregando...";
+
     player.src = `musicas/${genero}/${arquivo}`;
     player.play();
-
-    document.getElementById("trackName").innerText =
-        arquivo.replace(/_/g," ").replace(".mp3","");
 
     playBtn.src = "icon/pause.png";
 }
@@ -809,6 +807,31 @@ function calcularTempoGenero(genero){
         });
     });
 }
+
+/* ===============================
+BARRA DE CARREGAMENTO (BUFFER)
+================================ */
+
+player.addEventListener("loadstart", () => {
+    document.getElementById("trackName").innerText = "Carregando...";
+    document.getElementById("musicProgress").style.width = "0%";
+    document.getElementById("musicDot").style.left = "0%";
+});
+
+player.addEventListener("progress", () => {
+    if(player.buffered.length > 0 && player.duration){
+        const bufferedEnd = player.buffered.end(0);
+        const pct = Math.min((bufferedEnd / player.duration) * 100, 100);
+
+        document.getElementById("musicProgress").style.width = pct + "%";
+        document.getElementById("musicDot").style.left = pct + "%";
+    }
+});
+
+player.addEventListener("canplay", () => {
+    // mantém o pause/play correto
+    playBtn.src = "icon/pause.png";
+});
 
 </script>
 </body>
