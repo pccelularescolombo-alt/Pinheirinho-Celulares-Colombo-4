@@ -554,6 +554,7 @@ let generoAtual = "";
 let musicasTocadas = [];
 let contadorMusicas = 0;
 let tocandoDivulgacao = false;
+let musicaAtualNome = "";
 
 /* ===== INICIAR PLAY ===== */
 const playBtn = document.getElementById("playBtn");
@@ -593,15 +594,19 @@ function tocarProxima(){
 }
 
 function tocarMusica(genero, arquivo){
+    musicaAtualNome = arquivo
+        .replace(/_/g," ")
+        .replace(".mp3","");
+
     document.getElementById("trackName").innerText = "Carregando...";
 
     player.src = `musicas/${genero}/${arquivo}`;
+    player.load();
     player.play();
 
     playBtn.src = "icon/pause.png";
 }
 
-/* ===== EVENTO FIM ===== */
 /* ===== BARRAS ===== */
 player.addEventListener("timeupdate", () => {
 
